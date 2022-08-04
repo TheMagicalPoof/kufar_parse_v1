@@ -114,6 +114,7 @@ async def reg_cb(message: types.Message, state: FSMContext):
 
 async def dis_cb(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
+        pass
 
 
 

@@ -1,4 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from peewee import *
 
 
 """Клавиатура главного меню"""
@@ -54,6 +55,9 @@ kb_remove_1 = KeyboardButton("Удалить")
 kb_remove_2 = KeyboardButton("Не Удалять")
 kb_remove.row(kb_remove_1, kb_remove_2)
 
+
+def ui_generate():
+    pass
 """Клавиатура региона"""
 kb_reg = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 kb_reg_1 = KeyboardButton("Вся Беларусь")
