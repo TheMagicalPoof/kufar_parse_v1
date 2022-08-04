@@ -117,6 +117,7 @@ async def dis_cb(message: types.Message, state: FSMContext):
 
 
 
+
 async def confirm_cb(message: types.Message, state: FSMContext):
     if message.text == "Подтвердить":
         async with state.proxy() as data:
