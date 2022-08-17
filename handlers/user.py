@@ -15,6 +15,7 @@ class StatesUser(StatesGroup):
     rem_item = State()
     feedback = State()
 
+
 class StatesUserAddItem(StatesGroup):
     name = State()
     price_from = State()
@@ -27,6 +28,7 @@ class StatesUserAddItem(StatesGroup):
 async def cm_start(message: types.Message):
     await BOT.send_message(message.chat.id, "Этот бот создан для парсинга куфара /menu что бы начать")
 
+
 async def cm_menu(message: types.Message):
     await StatesUser.main.set()
     await BOT.send_message(message.chat.id, text="Главное меню:", reply_markup=kb_menu)
@@ -38,12 +40,14 @@ async def menu_cb(message: types.Message):
         await StatesUserAddItem.name.set()
         await BOT.send_message(message.chat.id, text="Напишите название предмета:", reply_markup=ReplyKeyboardRemove())
 
+
 async def name_cb(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["name"] = message.text
     await StatesUserAddItem.next()
     await BOT.send_message(message.chat.id,
                            text='Укажите цену "от":', reply_markup=kb_from)
+
 
 async def price_from_cb(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -58,6 +62,7 @@ async def price_from_cb(message: types.Message, state: FSMContext):
 
     await StatesUserAddItem.next()
     await BOT.send_message(message.chat.id, text='Укажите цену "до":', reply_markup=kb_to)
+
 
 async def price_to_cb(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
