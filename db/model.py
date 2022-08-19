@@ -35,6 +35,23 @@ class User(Model):
     class Meta:
         database = db
 
+class Search(Model):
+    id = PrimaryKeyField(unique=False)
+    name = TextField()
+
+    class Meta:
+        database = db
+
+
+class Associations(Model):
+    id = PrimaryKeyField(unique=False)
+    name = TextField()
+    search_id = ForeignKeyField(Search, backref="search")
+
+    class Meta:
+        database = db
+
+
 
 def create_table():
     db.connect()
@@ -43,4 +60,3 @@ def create_table():
 
 if __name__ == '__main__':
     create_table()
-
