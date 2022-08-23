@@ -5,6 +5,7 @@ from keyboards import kb_menu, kb_from, kb_to, kb_reg, kb_confirm
 from keyboards import kb_minsk_reg, kb_minsk_dis, kb_brest, kb_gomel, kb_hrodno, kb_mogilev, kb_vitebsk
 from aiogram.types import ReplyKeyboardRemove
 from keyboards import get_rkm
+from db import Region, District
 
 from create_bot import DP, BOT
 
@@ -32,7 +33,7 @@ async def cm_start(message: types.Message):
 
 async def cm_menu(message: types.Message):
     await StatesUser.main.set()
-    await BOT.send_message(message.chat.id, text="Главное меню:", reply_markup=get_rkm([["test, test1"], "test2", "test3", [], ["test4, test5, test6"]]))
+    await BOT.send_message(message.chat.id, text="Главное меню:", reply_markup=kb_menu)
 
 
 async def menu_cb(message: types.Message):
@@ -66,6 +67,7 @@ async def price_from_cb(message: types.Message, state: FSMContext):
 
 
 async def price_to_cb(message: types.Message, state: FSMContext):
+
     async with state.proxy() as data:
         if message.text == "Бесконечно":
             data["price_to"] = 0
@@ -83,11 +85,16 @@ async def price_to_cb(message: types.Message, state: FSMContext):
                                    reply_markup=kb_to)
             return
         await StatesUserAddItem.next()
-        await BOT.send_message(message.chat.id, text='Укажите область поиска:', reply_markup=kb_reg)
+
+        await BOT.send_message(message.chat.id,
+                               text='Укажите область поиска:',
+                               reply_markup=get_rkm([item.name for item in Region.select()]))
 
 
 async def reg_cb(message: types.Message, state: FSMContext):
+
     async with state.proxy() as data:
+        await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=get_rkm([item.district_name for item in District.select().where()]))
         if message.text == "Вся Беларусь":
             await StatesUserAddItem.confirm.set()
             data["reg"] = message.text
@@ -121,8 +128,6 @@ async def reg_cb(message: types.Message, state: FSMContext):
 async def dis_cb(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         pass
-
-
 
 
 async def confirm_cb(message: types.Message, state: FSMContext):

@@ -1,6 +1,7 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton
 
-def get_rkm(items):
+
+def get_rkm(items: list):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     for i in items:
         if isinstance(i, list):
@@ -10,75 +11,51 @@ def get_rkm(items):
     return keyboard
 
 
+def get_ikm(items: list):
+    keyboard = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    for item in items:
+        if isinstance(item, list):
+            pass
+        if isinstance(item, dict):
+            item.values()
+            keyboard.add(InlineKeyboardButton(item.value()))
+
 
 
 """Main menu keyboard"""
-kb_menu = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_menu_1 = KeyboardButton("Отслеживать предмет")
-kb_menu_2 = KeyboardButton("Изменить предмет")
-kb_menu_3 = KeyboardButton("Удалить предмет")
-kb_menu_4 = KeyboardButton("Вкл оповещение")
-kb_menu_5 = KeyboardButton("Выкл оповещение")
-kb_menu_6 = KeyboardButton("Обратная связь")
-kb_menu.add(kb_menu_1)
-kb_menu.add(kb_menu_2)
-kb_menu.add(kb_menu_3)
-kb_menu.add(kb_menu_4)
-kb_menu.add(kb_menu_5)
-kb_menu.add(kb_menu_6)
-
+kb_menu = get_rkm(["Отслеживать предмет",
+                   "Изменить предмет",
+                   "Удалить предмет",
+                   "Вкл оповещение",
+                   "Выкл оповещение",
+                   "Обратная связь"])
 
 """Клавиатура редактирования предмета"""
-kb_edit = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_edit_1 = KeyboardButton("Название")
-kb_edit_2 = KeyboardButton("Ассоциации")
-kb_edit_3 = KeyboardButton('Цену "от"')
-kb_edit_4 = KeyboardButton('Цену "до"')
-kb_edit_5 = KeyboardButton("Область поиска")
-kb_edit_6 = KeyboardButton("Назад")
-kb_edit.row(kb_edit_1, kb_edit_2)
-kb_edit.row(kb_edit_3, kb_edit_4)
-kb_edit.add(kb_edit_5)
-kb_edit.add(kb_edit_6)
-
+kb_edit = get_rkm(["Название",
+                   "Ассоциации",
+                   'Цену "от"',
+                   'Цену "до"',
+                   "Область поиска",
+                   "Назад"])
 
 """Клавиатура Цена от:"""
-kb_from = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_from.add(KeyboardButton("Даром"))
+kb_from = get_rkm(["Даром"])
 
 """Клавиатура Цена до:"""
-kb_to = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_to.add(KeyboardButton("Бесконечно"))
+kb_to = get_rkm(["Бесконечно"])
 
 """Клавиатура отмены/подтвержения предмета"""
-kb_confirm = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_confirm_1 = KeyboardButton("Редактировать")
-kb_confirm_2 = KeyboardButton("Подтвердить")
-kb_confirm_3 = KeyboardButton("Отменить")
-kb_confirm.add(kb_confirm_1)
-kb_confirm.row(kb_confirm_2, kb_confirm_3)
-
+kb_confirm = get_rkm(["Редактировать",
+                      "Подтвердить",
+                      "Отменить"])
 
 """Клавиатура подтверждения удаления"""
-kb_remove = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_remove_1 = KeyboardButton("Удалить")
-kb_remove_2 = KeyboardButton("Не Удалять")
-kb_remove.row(kb_remove_1, kb_remove_2)
-
+kb_remove = get_rkm(["Удалить", "Не Удалять"])
 
 """Клавиатура региона"""
-kb_reg = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-kb_reg_1 = KeyboardButton("Вся Беларусь")
-kb_reg_2 = KeyboardButton("Минск")
-kb_reg_3 = KeyboardButton("Минская обл.")
-kb_reg_4 = KeyboardButton("Брестская обл.")
-kb_reg_5 = KeyboardButton("Гомельская обл.")
-kb_reg_6 = KeyboardButton("Гродненская обл.")
-kb_reg_7 = KeyboardButton("Могилевская обл.")
-kb_reg.add(kb_reg_1)
-kb_reg.row(kb_reg_2, kb_reg_3)
-kb_reg.row(kb_reg_4, kb_reg_5)
-kb_reg.row(kb_reg_6, kb_reg_7)
+kb_reg = get_rkm(["Вся Беларусь", "Минск", "Минская обл.", "Брестская обл.", "Гомельская обл.", "Гродненская обл.", "Могилевская обл."])
+
+
 
 
 """Минск"""

@@ -1,8 +1,8 @@
 import datetime
-
+from create_bot import DB
 from peewee import *
 
-db = SqliteDatabase("test.db")
+
 
 
 class Region(Model):
@@ -10,7 +10,7 @@ class Region(Model):
     name = CharField()
 
     class Meta:
-        database = db
+        database = DB
 
 
 class District(Model):
@@ -19,12 +19,11 @@ class District(Model):
     district_name = CharField()
 
     class Meta:
-        database = db
+        database = DB
 
 
 class User(Model):
-    id = PrimaryKeyField(unique=True)
-    uid = IntegerField(unique=True)
+    uid = PrimaryKeyField(unique=True)
     username = CharField()
     phone_num = IntegerField(null=True)
     first_name = CharField(null=True)
@@ -34,7 +33,8 @@ class User(Model):
     is_active = BooleanField(default=True)
 
     class Meta:
-        database = db
+        database = DB
+
 
 class Item(Model):
     id = PrimaryKeyField(unique=True)
@@ -47,7 +47,7 @@ class Item(Model):
     user_id = ForeignKeyField(User, backref="user")
 
     class Meta:
-        database = db
+        database = DB
 
 
 class Tag(Model):
@@ -55,7 +55,7 @@ class Tag(Model):
     tag_name = CharField()
 
     class Meta:
-        database = db
+        database = DB
 
 
 class Associations(Model):
@@ -64,7 +64,7 @@ class Associations(Model):
     item_id = ForeignKeyField(Item, backref="item")
 
     class Meta:
-        database = db
+        database = DB
 
 
 class Feedback(Model):
@@ -72,15 +72,18 @@ class Feedback(Model):
     user_id = ForeignKeyField(User, backref="user")
     message_id = IntegerField()
 
-
     class Meta:
-        database = db
+        database = DB
 
 
 def create_table():
-    db.connect()
-    db.create_tables([User, Region, District, Item, Tag, Associations, Feedback])
+    DB.connect()
+    DB.create_tables([User, Region, District, Item, Tag, Associations, Feedback])
+
+
+def main():
+    print([item.name for item in Region.select()])
 
 
 if __name__ == '__main__':
-    create_table()
+    main()
