@@ -4,6 +4,7 @@ from aiogram import types, Dispatcher
 from keyboards import kb_menu, kb_from, kb_to, kb_reg, kb_confirm
 from keyboards import kb_minsk_reg, kb_minsk_dis, kb_brest, kb_gomel, kb_hrodno, kb_mogilev, kb_vitebsk
 from aiogram.types import ReplyKeyboardRemove
+from keyboards import get_rkm
 
 from create_bot import DP, BOT
 
@@ -31,7 +32,7 @@ async def cm_start(message: types.Message):
 
 async def cm_menu(message: types.Message):
     await StatesUser.main.set()
-    await BOT.send_message(message.chat.id, text="Главное меню:", reply_markup=kb_menu)
+    await BOT.send_message(message.chat.id, text="Главное меню:", reply_markup=get_rkm([["test, test1"], "test2", "test3", [], ["test4, test5, test6"]]))
 
 
 async def menu_cb(message: types.Message):

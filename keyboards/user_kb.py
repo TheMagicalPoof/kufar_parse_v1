@@ -1,8 +1,18 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from peewee import *
+
+def get_rkm(items):
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    for i in items:
+        if isinstance(i, list):
+            keyboard.row(*list(map(KeyboardButton, i)))
+            continue
+        keyboard.add(KeyboardButton(i))
+    return keyboard
 
 
-"""Клавиатура главного меню"""
+
+
+"""Main menu keyboard"""
 kb_menu = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 kb_menu_1 = KeyboardButton("Отслеживать предмет")
 kb_menu_2 = KeyboardButton("Изменить предмет")
@@ -56,8 +66,6 @@ kb_remove_2 = KeyboardButton("Не Удалять")
 kb_remove.row(kb_remove_1, kb_remove_2)
 
 
-def ui_generate():
-    pass
 """Клавиатура региона"""
 kb_reg = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 kb_reg_1 = KeyboardButton("Вся Беларусь")
