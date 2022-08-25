@@ -15,10 +15,14 @@ def get_ikm(items: list):
     keyboard = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     for item in items:
         if isinstance(item, list):
-            pass
-        if isinstance(item, dict):
-            item.values()
-            keyboard.add(InlineKeyboardButton(item.value()))
+            key_str = []
+            for key_data in item:
+                key_str.append(InlineKeyboardButton(key_data[0], callback_data=key_data[1]))
+            keyboard.row(*key_str)
+            continue
+
+        keyboard.add(InlineKeyboardButton(item[0], callback_data=item[1]))
+    return keyboard
 
 
 

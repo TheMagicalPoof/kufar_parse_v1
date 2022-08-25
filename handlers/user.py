@@ -4,7 +4,7 @@ from aiogram import types, Dispatcher
 from keyboards import kb_menu, kb_from, kb_to, kb_reg, kb_confirm
 from keyboards import kb_minsk_reg, kb_minsk_dis, kb_brest, kb_gomel, kb_hrodno, kb_mogilev, kb_vitebsk
 from aiogram.types import ReplyKeyboardRemove
-from keyboards import get_rkm
+from keyboards import get_rkm, get_ikm
 from db import Region, District
 
 from create_bot import DP, BOT
@@ -88,13 +88,16 @@ async def price_to_cb(message: types.Message, state: FSMContext):
 
         await BOT.send_message(message.chat.id,
                                text='Укажите область поиска:',
-                               reply_markup=get_rkm([item.name for item in Region.select()]))
+                               reply_markup=get_ikm([(item.name, item.id) for item in Region.select()]))
 
 
+DP.callback_query_handler()
 async def reg_cb(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
-        await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=get_rkm([item.district_name for item in District.select().where()]))
+
+        # await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=get_rkm([item.district_name for item in District.select().where()]))
+        print(message)
         if message.text == "Вся Беларусь":
             await StatesUserAddItem.confirm.set()
             data["reg"] = message.text
