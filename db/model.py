@@ -5,6 +5,7 @@ from peewee import *
 
 
 
+
 class Region(Model):
     id = PrimaryKeyField(unique=True)
     name = CharField()
@@ -16,7 +17,7 @@ class Region(Model):
 class District(Model):
     id = PrimaryKeyField(unique=True)
     region_id = ForeignKeyField(Region, backref="region")
-    district_name = CharField()
+    name = CharField()
 
     class Meta:
         database = DB
@@ -38,13 +39,12 @@ class User(Model):
 
 class Item(Model):
     id = PrimaryKeyField(unique=True)
-    item_name = CharField()
+    name = CharField()
     price_from = IntegerField(null=True)
     price_to = IntegerField(null=True)
     district_id = ForeignKeyField(District, backref="district", null=True)
-    region_id = ForeignKeyField(Region, backref="region", null=True)
     until_active = DateField(null=True)
-    user_id = ForeignKeyField(User, backref="user")
+    uid = ForeignKeyField(User, backref="user")
 
     class Meta:
         database = DB
@@ -52,7 +52,7 @@ class Item(Model):
 
 class Tag(Model):
     id = PrimaryKeyField(unique=True)
-    tag_name = CharField()
+    name = CharField()
 
     class Meta:
         database = DB
@@ -69,7 +69,7 @@ class Associations(Model):
 
 class Feedback(Model):
     id = PrimaryKeyField(unique=False)
-    user_id = ForeignKeyField(User, backref="user")
+    uid = ForeignKeyField(User, backref="user")
     message_id = IntegerField()
 
     class Meta:
@@ -77,13 +77,9 @@ class Feedback(Model):
 
 
 def create_table():
-    DB.connect()
+    DB = SqliteDatabase("test.db")
     DB.create_tables([User, Region, District, Item, Tag, Associations, Feedback])
 
 
-def main():
-    print([item.name for item in Region.select()])
-
-
 if __name__ == '__main__':
-    main()
+    create_table()

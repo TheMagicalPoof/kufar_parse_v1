@@ -91,46 +91,27 @@ async def price_to_cb(message: types.Message, state: FSMContext):
                                reply_markup=get_ikm([(item.name, item.id) for item in Region.select()]))
 
 
-DP.callback_query_handler()
-async def reg_cb(message: types.Message, state: FSMContext):
-
-    async with state.proxy() as data:
-
-        # await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=get_rkm([item.district_name for item in District.select().where()]))
-        print(message)
-        if message.text == "Вся Беларусь":
-            await StatesUserAddItem.confirm.set()
-            data["reg"] = message.text
-            await BOT.send_message(message.chat.id,
-                                   text=f'Перепроверте, всё ли верно?\nПредмет #{data.get("name")}\nЦена: от {data.get("price_from")} до {data.get("price_to")}\nОбласть поиска: {data.get("reg")}',
-                                   reply_markup=kb_confirm)
-            return
-
-        if message.text == "Минск":
-            await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=kb_minsk_reg)
-        elif message.text == "Минская обл.":
-            await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=kb_minsk_dis)
-        elif message.text == "Брестская обл.":
-            await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=kb_brest)
-        elif message.text == "Гомельская обл.":
-            await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=kb_gomel)
-        elif message.text == "Гродненская обл.":
-            await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=kb_hrodno)
-        elif message.text == "Могилевская обл.":
-            await BOT.send_message(message.chat.id, text=f'Укажите район:', reply_markup=kb_mogilev)
-        else:
-            await BOT.send_message(message.chat.id,
-                                   text='Укажите корректную область поиска:',
-                                   reply_markup=kb_reg)
-            return
-
-        data["reg"] = message.text
+async def reg_cb(call: types.CallbackQuery, state: FSMContext):
+        await BOT.send_message(call.message.chat.id,
+                               text=f'Укажите район:',
+                               reply_markup=get_ikm([(item.district_name, item.id) for item in District.select().where(District.region_id == call.data)]))
         await StatesUserAddItem.next()
 
 
-async def dis_cb(message: types.Message, state: FSMContext):
+async def dis_cb(call: types.CallbackQuery, state: FSMContext):
+    district = District.get(District.id == call.data)
+    region = Region.get(Region.id == district.region_id)
     async with state.proxy() as data:
-        pass
+        await BOT.send_message(call.message.chat.id,
+                               text=f'Всё ли верно?:\n'
+                                    f'Предмет: #{data["name"]}\n'
+                                    f'Цена от: {data["price_from"]}\n' if data["price_from"] != 0 else ''
+                                    f'Цена до: {data["price_to"]}\n' if data["price_to"] != 0 else ''
+                                    f'Область: {region.name}\n'
+                                    f'Район: {district.name}\n',
+                               reply_markup=kb_confirm)
+        await StatesUserAddItem.next()
+        data["district"] = call.data
 
 
 async def confirm_cb(message: types.Message, state: FSMContext):
@@ -143,7 +124,7 @@ async def confirm_cb(message: types.Message, state: FSMContext):
             await state.finish()
     if message.text == "Отменить":
         await BOT.send_message(message.chat.id,
-                               text='Вы всё отменили операцию.',
+                               text='Вы отменили операцию.',
                                reply_markup=ReplyKeyboardRemove())
         await state.finish()
 
@@ -161,9 +142,9 @@ def register_handlers_user(dp: Dispatcher):
     dp.register_message_handler(name_cb, state=[StatesUser.add_item, StatesUserAddItem.name])
     dp.register_message_handler(price_from_cb, state=[StatesUser.add_item, StatesUserAddItem.price_from])
     dp.register_message_handler(price_to_cb, state=[StatesUser.add_item, StatesUserAddItem.price_to])
-    dp.register_message_handler(reg_cb, state=[StatesUser.add_item, StatesUserAddItem.region])
-    # dp.register_message_handler(reg_cb, state=[StatesUser.add_item, StatesUserAddItem.district])
     dp.register_message_handler(confirm_cb, state=[StatesUser.add_item, StatesUserAddItem.confirm])
+    dp.register_callback_query_handler(reg_cb, state=[StatesUser.add_item, StatesUserAddItem.region])
+    dp.register_callback_query_handler(dis_cb, state=[StatesUser.add_item, StatesUserAddItem.district])
 
 
 
